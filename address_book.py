@@ -27,52 +27,37 @@ class Record:
         self.phones.append(Phone(phone))
         
     def remove_phone(self,phone):
-        new_l = []
-        for i in filter(lambda x:x.value !=phone, self.phones):
-            new_l.append(i)
-        self.phones = new_l
+        self.phones = [p for p in self.phones if p.value != phone]
         
     def edit_phone(self,phone, new_phone):
         for i in self.phones:
             if(i.value == phone):
                 i.value = new_phone
+                break
         
     def find_phone(self,phone):
-        search_v = {}
-        for i in filter(lambda x:x.value ==phone, self.phones):
-            search_v = i
-        return search_v
-        
+        return next((p for p in self.phones if p.value == phone), None)
+    
     def __str__(self) -> str:
         return f"Contact name: {self.name.value}, phones: {';'.join(p.value for p in self.phones)}"
     
 class AddressBook(UserDict):
     def add_record(self,user):
-        phones = []
-        for p in user.phones:
-            phones.append(p.value)
-            print(p.value)
-        
-        # self.data.update({user.name.value : phones})
-        self.data.update(user)
+       self.data[user.name.value] = user
         
     def find(self,name):
-        print(self.data[name])
-        # user = {}
-        # for i in filter(lambda x:x[name] ==name, self.data):
-        #     user = i
-        return True
+        return self.data[name] if name in self.data.keys() else None
     def delete(self,name):
-        new_l ={}
-        for i in filter(lambda x:x[name] !=name, self.data):
-            new_l.update(i)
-        self.data = new_l
+        if name in self.data:
+            del self.data[name]
         
     
 book = AddressBook()
 kari_record = Record('Kari')
 kari_record.add_phone('1309198934')
 kari_record.add_phone('0909202003')
+kari_record.edit_phone('0909202003', '1313131313')
+
 book.add_record(kari_record)
 
 platon_record = Record('Platon')
@@ -80,12 +65,11 @@ platon_record.add_phone('7894561230')
 platon_record.add_phone('0123654789')
 book.add_record(platon_record)
 
-# kari = book.find('Kari')
+kari = book.find('Kari')
+book.delete('Platon')
+search =kari_record.find_phone('0909202003')
 
-print(book.data)
-
-# for name,record in book.data.items():
-#     print(record, 'here')
-#     print(name, 'here')
+for name,record in book.data.items():
+    print(record)
     
 
